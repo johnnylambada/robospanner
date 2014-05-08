@@ -1,0 +1,64 @@
+######################################################################
+# apk-validate will validate an APK against a keystore. No output is
+# good and tells you the apk was signed with the keystore and has not
+# been tampered with. Note that even though the keystore password is
+# required, the key password itself is not necessary for validation.
+#
+# Returns: 
+#   0 if good
+#   1 when jar has been tampered with
+#   2 for key mismatch
+#
+# Generally:
+# apk-validate -apk /path/to/questionable.apk \
+#              -keystore /path/to/keystore \
+#              -storepass keystore-password \
+#              -alias name-of-key-in-store
+#
+# For example - to validate against your debug key
+# example: apk-validate -apk my.apk \
+#                       -keystore ~/.android/debug.keystore \
+#                       -alias androiddebugkey \
+#                       -storepass android
+######################################################################
+# (c) Lombardo 2014 - Apache license
+######################################################################
+function apk-validate() {
+    local apk=
+    local keystore=
+    local storepass=
+    local alias=
+    local keysig=
+    local apksig=
+    while [ -n "$1" ]; do
+        case $1 in
+        -apk) shift; apk=$1 ;;
+        -keystore) shift; keystore=$1 ;;
+        -storepass) shift; storepass=$1 ;;
+        -alias) shift; alias=$1 ;;
+        *)
+            echo >&2 $0: unknown parameter $1
+            return 1
+        esac
+        shift
+    done
+    if [ -z "$apk" -o -z "$keystore" -o -z "$storepass" -o -z "$alias" ]; then
+        echo >&2 "usage: $FUNCNAME -apk apk -keystore keystore -storepass storepass -alias alias"
+        echo >&2 "See the man page for keytool for an explanation of the parameters."
+        return 1
+    fi
+    # Validate the apk has not been tampered with
+    jarsigner -verify $apk >/dev/null || {
+        echo >&2 "$FUNCNAME: error in jarsigner -verify $apk"
+        return 1
+    }
+    # Validate the apk is signed with the key we think it is
+    keysig="$(keytool -list -keystore $keystore -alias $alias -storepass $storepass | sed -n '/Certificate fingerprint .SHA1.:/s/.*: //p')"
+    apksig="$(unzip -p $apk META-INF/CERT.RSA | keytool -printcert | sed -n '/SHA1:/s/.*: //p')"
+    if [ -z "$keysig" -o -z "$apksig" -o "$keysig" != "$apksig" ]; then
+        echo >&2 "$FUNCNAME: Signatures do not match"
+        echo >&2 "  key sig: $keysig"
+        echo >&2 "  apk sig: $apksig"
+        return 2
+    fi
+}
