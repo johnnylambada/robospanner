@@ -53,7 +53,7 @@ function apk-validate() {
         return 1
     }
     # Validate the apk is signed with the key we think it is
-    keysig="$(keytool -list -keystore $keystore -alias $alias -storepass $storepass | sed -n '/Certificate fingerprint .SHA1.:/s/.*: //p')"
+    keysig="$(keytool -list -v -keystore $keystore -alias $alias -storepass $storepass | sed -n '/SHA1: /s/.*: //p')"
     apksig="$(unzip -p $apk META-INF/CERT.RSA | keytool -printcert | sed -n '/SHA1:/s/.*: //p')"
     if [ -z "$keysig" -o -z "$apksig" -o "$keysig" != "$apksig" ]; then
         echo >&2 "$FUNCNAME: Signatures do not match"
