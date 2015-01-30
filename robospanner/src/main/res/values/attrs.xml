@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SquareImageView">
+        <attr name="matchWidthToHeight" format="boolean" />
+        <attr name="matchHeightToWidth" format="boolean" />
+    </declare-styleable>
+</resources>
