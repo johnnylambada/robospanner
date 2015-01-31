@@ -1,4 +1,4 @@
-package johnnylambada.fragment;
+package robospanner.fragment;
 
 /**
  * Created by john on 12/6/14.

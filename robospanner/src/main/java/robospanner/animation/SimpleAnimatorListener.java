@@ -1,4 +1,4 @@
-package johnnylambada.animation;
+package robospanner.animation;
 
 import com.nineoldandroids.animation.Animator;
 

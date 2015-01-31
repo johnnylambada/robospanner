@@ -1,11 +1,11 @@
-package johnnylambada.widget;
+package robospanner.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-import johnnylambada.R;
+import robospanner.R;
 
 /**
  * Created by john on 11/25/14.
