@@ -1,5 +1,6 @@
 package robospanner.util;
 
+import android.content.Context;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.Drawable;
@@ -41,5 +42,16 @@ public class Graphics {
     public static void tint(ImageView view, int... colorAlpha) {
         Drawable drawable = view.getDrawable();
         tint(drawable, colorAlpha);
+    }
+
+    /**
+     * Convert a number of dips to screen pixels
+     * See Roman Guy's comments: http://stackoverflow.com/a/2406790/9648
+     * @param context
+     * @param dips the number of dips
+     * @return the number of pixels that number of dips represents
+     */
+    public static int dipsToPixels(Context context, int dips){
+        return (int) (dips * context.getResources().getDisplayMetrics().density + 0.5f);
     }
 }
